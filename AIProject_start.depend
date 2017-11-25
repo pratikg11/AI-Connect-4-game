@@ -1,0 +1,12 @@
+# depslib dependency file v1.0
+1510296146 source:c:\users\pag11\desktop\aiproject_start\main.cpp
+	<iostream>
+	"Board.h"
+	"Board.cpp"
+
+1510296870 c:\users\pag11\desktop\aiproject_start\board.h
+
+1510296809 c:\users\pag11\desktop\aiproject_start\board.cpp
+	<iostream>
+	"Board.h"
+
