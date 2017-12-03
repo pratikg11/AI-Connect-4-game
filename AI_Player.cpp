@@ -136,11 +136,13 @@ int Ai_Player::AIperformMove(Board& board,int choice,int player,int &noOfNodes){
     if(player==playerO){
     AI_Move ai_move=getBestMove(board,choice,player,noOfNodes);
     board.setValue(ai_move.x,ai_move.y,'O');
+    cout<<"2 return val"<<board.evaluateFunction(playerO,ai_move.x,ai_move.y)<<endl;
     return board.evaluateFunction(playerO,ai_move.x,ai_move.y);
     }
     else if(player==playerX){
     AI_Move ai_move=getBestMove(board,choice,player,noOfNodes);
     board.setValue(ai_move.x,ai_move.y,'X');
+    cout<<"1 return val"<<board.evaluateFunction(playerX,ai_move.x,ai_move.y)<<endl;
     return board.evaluateFunction(playerX,ai_move.x,ai_move.y);
     }
 
@@ -378,54 +380,90 @@ AI_Move Ai_Player::getBestMove(Board board,int choice,int player,int &noOfNodes)
     srand(time(0));
     int arr1[6];
     int arr[7];
-//    if(player==playerO){
-//    for (int i = 0; i<rows; i++)
-//    {
-//        for (int j = 0; j<columns; j++)
-//        {
-//            // Check if celll is empty
-//            if ((i==rows-1 && board.getValue(i,j)==' ')||(board.getValue(i,j)==' ' && board.getValue(i+1,j)!=' '))
-//            {
-//               int result= board.checkIfPlayerWins(playerO,i,j);
-//               if(result==-10){
-//                bestMove.x=i;
-//                bestMove.y=j;
-//                return bestMove;
-//               }
-//               result=board.checkIfPlayerWins(playerX,i,j);
-//               if(result==10){
-//                bestMove.x=i;
-//                bestMove.y=j;
-//                return bestMove;
-//               }
-//            }
-//        }
-//    }
-//    }
-//    if(player==playerX){
-//    for (int i = 0; i<rows; i++)
-//    {
-//        for (int j = 0; j<columns; j++)
-//        {
-//            // Check if celll is empty
-//            if ((i==rows-1 && board.getValue(i,j)==' ')||(board.getValue(i,j)==' ' && board.getValue(i+1,j)!=' '))
-//            {
-//               int result= board.checkIfPlayerWins(playerX,i,j);
-//               if(result==10){
-//                bestMove.x=i;
-//                bestMove.y=j;
-//                return bestMove;
-//               }
-//               result=board.checkIfPlayerWins(playerO,i,j);
-//               if(result==-10){
-//                bestMove.x=i;
-//                bestMove.y=j;
-//                return bestMove;
-//               }
-//            }
-//        }
-//    }
-//    }
+    if(player==playerO){
+    for (int i = 0; i<rows; i++)
+    {
+        for (int j = 0; j<columns; j++)
+        {
+            // Check if celll is empty
+            if ((i==rows-1 && board.getValue(i,j)==' ')||(board.getValue(i,j)==' ' && board.getValue(i+1,j)!=' '))
+            {
+                board.setValue(i,j,'O');
+               int result= board.evaluateFunction(playerO,i,j);
+                 board.setValue(i,j,' ');
+               if(result==-10){
+                bestMove.x=i;
+                bestMove.y=j;
+                bestMove.score=-10;
+                return bestMove;
+               }
+
+            }
+        }
+    }
+     for (int i = 0; i<rows; i++)
+    {
+        for (int j = 0; j<columns; j++)
+        {
+            // Check if celll is empty
+            if ((i==rows-1 && board.getValue(i,j)==' ')||(board.getValue(i,j)==' ' && board.getValue(i+1,j)!=' '))
+            {
+                board.setValue(i,j,'X');
+                int result=board.evaluateFunction(playerX,i,j);
+                board.setValue(i,j,' ');
+                if(result==10){
+                bestMove.x=i;
+                bestMove.y=j;
+                bestMove.score=-10;
+                return bestMove;
+               }
+
+            }
+        }
+    }
+    }
+    if(player==playerX){
+    for (int i = 0; i<rows; i++)
+    {
+        for (int j = 0; j<columns; j++)
+        {
+            // Check if celll is empty
+            if ((i==rows-1 && board.getValue(i,j)==' ')||(board.getValue(i,j)==' ' && board.getValue(i+1,j)!=' '))
+            {
+                board.setValue(i,j,'X');
+               int result= board.evaluateFunction(playerX,i,j);
+                board.setValue(i,j,' ');
+               if(result==10){
+                bestMove.x=i;
+                bestMove.y=j;
+                bestMove.score=10;
+                return bestMove;
+               }
+
+            }
+        }
+    }
+     for (int i = 0; i<rows; i++)
+    {
+        for (int j = 0; j<columns; j++)
+        {
+            // Check if celll is empty
+            if ((i==rows-1 && board.getValue(i,j)==' ')||(board.getValue(i,j)==' ' && board.getValue(i+1,j)!=' '))
+            {
+                board.setValue(i,j,'O');
+                int result=board.evaluateFunction(playerO,i,j);
+                  board.setValue(i,j,' ');
+               if(result==-10){
+                bestMove.x=i;
+                bestMove.y=j;
+                bestMove.score=10;
+                return bestMove;
+               }
+
+            }
+        }
+    }
+    }
 
 
    switch(player){
@@ -578,8 +616,6 @@ case 2:
             count++;
             if ((i==rows-1 && board.getValue(i,j)==' ')||(board.getValue(i,j)==' ' && board.getValue(i+1,j)!=' '))
             {
-
-
                 // Make the move
                 //int valOfMove;
                 Score valOfMove;

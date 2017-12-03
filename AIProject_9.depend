@@ -1,0 +1,27 @@
+# depslib dependency file v1.0
+1511601558 source:c:\users\pag11\desktop\aiproject_9\main.cpp
+	<iostream>
+	"Board.h"
+	"Board.cpp"
+	"Ai_Player.h"
+	"Ai_Player.cpp"
+	<time.h>
+	<stdio.h>
+
+1511572826 c:\users\pag11\desktop\aiproject_9\board.h
+
+1511603848 c:\users\pag11\desktop\aiproject_9\board.cpp
+	<iostream>
+	"Board.h"
+
+1511572844 c:\users\pag11\desktop\aiproject_9\ai_player.h
+	"Board.h"
+
+1511603676 c:\users\pag11\desktop\aiproject_9\ai_player.cpp
+	<iostream>
+	<cmath>
+	<stdlib.h>
+	<time.h>
+	"Ai_Player.h"
+	"Board.h"
+

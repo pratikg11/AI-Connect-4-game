@@ -23,50 +23,56 @@ int main()
     cout<<"1.Minimax Algorithm"<<endl;
     cout<<"2.Minimax using alpha beta pruning"<<endl;
     cin>>choice;
-    //choice=1;
+   // choice=2;
     //cout<<"Do u want to start 1st with X(Y/N)";
    // cin>>c;
-//b.setValue(5,0,'0');
-//b.setValue(5,1,'0');
-//   b.setValue(5,5,'0');
-//   b.setValue(5,4,'0');
-//   b.setValue(5,3,'0');
-//   b.setValue(5,2,'0');
-//   b.setValue(4,4,'0');
-//   b.setValue(4,3,'0');
-//   b.setValue(4,2,'0');
-//   b.setValue(3,3,'0');
-//   b.setValue(1,0,'X');
-////    if(c=='y'){
-////            while(result)
-////            {
-////                b.displayBoard();
-////                int i=b.userPerformMove(1);
-////                if(i==1){
-////                    result=false;
-////                }
-////                else if(i==2)
-////                    result=true;
-//////                else if(i==0){
-//////                    int j=a.AIperformMove(b,choice);
-//////                    b.displayBoard();
-//////                    if(j==-10)
-//////                    {
-//////                       b.displayBoard();
-//////                       cout<<"Player 2 wins";
-//////                       result=false;
-//////                    }
-////
-////                }
-////                count=count+2;
-////                if(count==totalPossibleMoves)
-////                {
-////                    cout<<"Game is Over. Its a draw"<<endl;
-////                    result=false;
-////                }
-////            }
-
-    //}
+//b.setValue(5,0,'X');
+//b.setValue(5,1,'X');
+//   b.setValue(5,2,'O');
+//   b.setValue(5,3,'O');
+//   b.setValue(5,4,'O');
+//   b.setValue(5,5,'X');
+//   b.setValue(5,6,'X');
+//   b.setValue(4,0,'O');
+//   b.setValue(4,1,'X');
+//   b.setValue(4,2,'X');
+//   b.setValue(4,3,'O');
+//   b.setValue(4,4,'X');
+//   b.setValue(4,5,'O');
+//   b.setValue(4,6,'O');
+//   b.setValue(3,1,'X');
+//   b.setValue(2,1,'O');
+//////    if(c=='y'){
+//////            while(result)
+//////            {
+//////                b.displayBoard();
+//////               int i=b.userPerformMove(1);
+//////               //int i=b.setValue(3,2,'X');
+//////                if(i==1){
+//////                    result=false;
+//////                }
+//////                else if(i==2)
+//////                    result=true;
+////////                else if(i==0){
+////////                    int j=a.AIperformMove(b,choice,2,noOfNodes);
+////////                    b.displayBoard();
+////////                    if(j==-10)
+////////                    {
+////////                       b.displayBoard();
+////////                       cout<<"Player 2 wins";
+////////                       result=false;
+////////                    }
+////////
+////////                }
+//////                count=count+2;
+//////                if(count==totalPossibleMoves)
+//////                {
+//////                    cout<<"Game is Over. Its a draw"<<endl;
+//////                    result=false;
+//////                }
+//////            }
+//////
+//////    }
 
 
 while(result)

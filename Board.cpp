@@ -227,11 +227,11 @@ int Board::getInput(){
    cin>>usersCurrent_RowNo;
     cout<<"Enter column : ";
     cin>>usersCurrent_ColumnNo;
-//    board[3][0]='X';
+   // board[3][2]='X';
 //    board[2][0]='0';
 //    board[1][0]='X';
-   // usersCurrent_RowNo=0;
-    //usersCurrent_ColumnNo=0;
+   // usersCurrent_RowNo=2;
+   // usersCurrent_ColumnNo=2;
     return performMove(usersCurrent_RowNo,usersCurrent_ColumnNo);
 }
 
@@ -257,7 +257,7 @@ char Board::getValue(int x,int y){
 }
 
 
-int Board::evaluateFunction2(int player,int row,int column){
+int Board::evaluateFunction(int player,int row,int column){
     char char_Player;
     int returnValue;
     int count1=1,count2=1,count3=1,count4=1;
@@ -294,7 +294,7 @@ int Board::evaluateFunction2(int player,int row,int column){
                 count1=count1+2;
             else if(left || right)
                 count1++;
-            if(count1==winCount && (left || right)){
+            if(count1>=winCount && (left || right)){
                 return returnValue;
             }
             if(!(left || right)){
@@ -323,7 +323,7 @@ int Board::evaluateFunction2(int player,int row,int column){
                 count2=count2+2;
             else if(up || down)
                 count2++;
-            if(count2==winCount && (up || down)){
+            if(count2>=winCount && (up || down)){
                 return returnValue;
             }
             if(!(up || down)){
@@ -354,7 +354,7 @@ int Board::evaluateFunction2(int player,int row,int column){
                 count3=count3+2;
             else if(rightUp || leftdown)
                 count3++;
-            if(count3==winCount && (rightUp || leftdown)){
+            if(count3>=winCount && (rightUp || leftdown)){
                 return returnValue;
             }
             if(!(rightUp || leftdown)){
@@ -387,7 +387,7 @@ int Board::evaluateFunction2(int player,int row,int column){
                 count4=count4+2;
             else if (leftUp || rightDown)
                 count4++;
-            if(count4==winCount && (leftUp || rightDown)){
+            if(count4>=winCount && (leftUp || rightDown)){
                 return returnValue;
             }
             if(!(leftUp || rightDown)){
@@ -405,9 +405,10 @@ int Board::evaluateFunction2(int player,int row,int column){
           return -count;
        }
        return count;
+       //return 0;
 }
 
-int Board::evaluateFunction(int player,int row,int column){
+int Board::evaluateFunction2(int player,int row,int column){
         char cplayer='X';
         int result=10;
 
@@ -416,28 +417,45 @@ int Board::evaluateFunction(int player,int row,int column){
          result=-10;
     }
 
-    if((board[row][column]==cplayer && board[row][column-1]==cplayer && board[row][column-2]==cplayer && board[row][column-3]==cplayer) ||
-       (board[row][column]==cplayer && board[row][column+1]==cplayer && board[row][column+2]==cplayer && board[row][column+3]==cplayer) ||
-        (board[row][column]==cplayer && board[row][column-1]==cplayer && board[row][column+1]==cplayer && board[row][column+2]==cplayer) ||
-       (board[row][column]==cplayer && board[row][column+1]==cplayer && board[row][column-1]==cplayer && board[row][column-2]==cplayer))
+    if((board[row][column]==cplayer && (column-1)>=0 && board[row][column-1]==cplayer && (column-2)>=0 && board[row][column-2]==cplayer && (column-3)>=0
+        && board[row][column-3]==cplayer) ||
+       (board[row][column]==cplayer && (column+1)<7 && board[row][column+1]==cplayer && (column+2)<7 && board[row][column+2]==cplayer
+        && (column+3)<7 && board[row][column+3]==cplayer) ||
+        (board[row][column]==cplayer && (column-1)>=0 && board[row][column-1]==cplayer &&(column+1)<7 && board[row][column+1]==cplayer &&
+         (column+2)<7 && board[row][column+2]==cplayer) ||
+       (board[row][column]==cplayer && (column+1)<7 && board[row][column+1]==cplayer && (column-1)>=0 &&  board[row][column-1]==cplayer &&
+         (column-2)>=0 && board[row][column-2]==cplayer))
         return result;
 
-    if((board[row][column]==cplayer && board[row-1][column]==cplayer && board[row-2][column]==cplayer && board[row-3][column]==cplayer) ||
-       (board[row][column]==cplayer && board[row+1][column]==cplayer && board[row+2][column]==cplayer && board[row+3][column]==cplayer) ||
-       (board[row][column]==cplayer && board[row+1][column]==cplayer && board[row-1][column]==cplayer && board[row-2][column]==cplayer) ||
-       (board[row][column]==cplayer && board[row-1][column]==cplayer && board[row+1][column]==cplayer && board[row+2][column]==cplayer))
+    if((board[row][column]==cplayer && board[row-1][column]==cplayer && board[row-2][column]==cplayer && board[row-3][column]==cplayer
+        && (row-1)>=0 && (row-2)>=0 && (row-3)>=0) ||
+       (board[row][column]==cplayer && board[row+1][column]==cplayer && board[row+2][column]==cplayer && board[row+3][column]==cplayer
+        && (row+1)<6 && (row+2)<6 && (row+3)<6) ||
+       (board[row][column]==cplayer && board[row+1][column]==cplayer && board[row-1][column]==cplayer && board[row-2][column]==cplayer
+        && (row+1)<6 && (row-1)>=0 && (row-2)>=0) ||
+       (board[row][column]==cplayer && board[row-1][column]==cplayer && board[row+1][column]==cplayer && board[row+2][column]==cplayer
+        && (row-1)>=0 && (row+1)<6 && (row+2)<6))
         return result;
 
-    if((board[row][column]==cplayer && board[row-1][column-1]==cplayer && board[row-2][column-2]==cplayer && board[row-3][column-3]==cplayer) ||
-       (board[row][column]==cplayer && board[row+1][column+1]==cplayer && board[row+2][column+2]==cplayer && board[row+3][column+3]==cplayer) ||
-       (board[row][column]==cplayer && board[row+1][column+1]==cplayer && board[row-1][column-1]==cplayer && board[row-2][column-2]==cplayer) ||
-       (board[row][column]==cplayer && board[row-1][column-1]==cplayer && board[row+1][column+1]==cplayer && board[row+2][column+2]==cplayer))
+    if((board[row][column]==cplayer && board[row-1][column-1]==cplayer && board[row-2][column-2]==cplayer && board[row-3][column-3]==cplayer
+        && (row-1)>=0 && (row-2)>=0 && (row-3)>=0 && (column-1)>=0 && (column-2)>=0 && (column-3)>=0) ||
+       (board[row][column]==cplayer && board[row+1][column+1]==cplayer && board[row+2][column+2]==cplayer && board[row+3][column+3]==cplayer
+        && (row+1)<6 && (row+2)<6 && (row+3)<6 && (column+1)<7 && (column+2)<7 && (column+3)<7) ||
+       (board[row][column]==cplayer && board[row+1][column+1]==cplayer && board[row-1][column-1]==cplayer && board[row-2][column-2]==cplayer
+        && (row+1)<6 && (column+1)<7 && (row-1)>=0 && (row-2)>=0 && (column-1)>=0 && (column-2)>=0) ||
+       (board[row][column]==cplayer && board[row-1][column-1]==cplayer && board[row+1][column+1]==cplayer && board[row+2][column+2]==cplayer
+        && (row-1)>=0 && (column-1)>=0 && (row+1)<6 && (row+2)<6 && (column+1)<7 && (column+2)<7))
         return result;
+  //  char ch=board[row+3][column-3];
+    if((board[row][column]==cplayer && board[row+1][column-1]==cplayer && board[row+2][column-2]==cplayer && board[row+3][column-3]==cplayer
+        && (row+1)<6 && (row+2)<6 && (row+3)<6 && (column-1)>=0 && (column-2)>=0 && (column-3)>=0) ||
 
-    if((board[row][column]==cplayer && board[row+1][column-1]==cplayer && board[row+2][column-2]==cplayer && board[row+3][column-3]==cplayer) ||
-        (board[row][column]==cplayer && board[row-1][column+1]==cplayer && board[row-2][column+2]==cplayer && board[row-3][column+3]==cplayer) ||
-       (board[row][column]==cplayer && board[row+1][column-1]==cplayer && board[row-1][column+1]==cplayer && board[row-2][column+2]==cplayer) ||
-       (board[row][column]==cplayer && board[row-1][column+1]==cplayer && board[row+1][column-1]==cplayer && board[row+2][column-2]==cplayer))
+        (board[row][column]==cplayer && board[row-1][column+1]==cplayer && board[row-2][column+2]==cplayer && board[row-3][column+3]==cplayer
+         && (row-1)>=0 && (row-2)>=0 && (row-3)>=0 && (column+1)<7 && (column+2)<7 && (column+3)<7) ||
+       (board[row][column]==cplayer && board[row+1][column-1]==cplayer && board[row-1][column+1]==cplayer && board[row-2][column+2]==cplayer
+        && (row+1)<6 && (row-1)>=0 && (row-2)>=0 && (column-1)>=0 && (column+1)<7 && (column+2)<7 ) ||
+       (board[row][column]==cplayer && board[row-1][column+1]==cplayer && board[row+1][column-1]==cplayer && board[row+2][column-2]==cplayer
+        && (row-1)>=0 && (row+1)<6 && (row+2)<6 && (column-1)>=0 && (column+1)<7 && (column-2)>=0))
        return result;
 
     return 0;
