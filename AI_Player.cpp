@@ -2,661 +2,679 @@
 #include<cmath>
 #include <stdlib.h>
 #include <time.h>
-#include"Ai_Player.h"
+#include"AI_Player.h"
 #include"Board.h"
-//#include"Board.cpp"
 
 using namespace std;
+//Move-Gen function which is plausible-move generator
+Score Ai_Player::moveGen(Board board, int depth, int player, int &noOfNodes,
+		int &countminus, int evaluateFunctionNo) {
+	if (player == playerO) {
+		Score best;
+		best.value = 1000;
+		best.depth = -1;
 
-Score Ai_Player::moveGen(Board board,int depth,int player, int &noOfNodes)
-{
-     if(player==playerO)
-    {
-        Score best;
-        best.value = 1000;
-        best.depth=-1;
-        //int best = 1000;
+		// Traverse through the rows
+		for (int i = 0; i < rows; i++) {
+			// Traverse through the columns
+			for (int j = 0; j < columns; j++) {
+				// Check if cell is empty
+				if ((i == rows - 1 && board.getValue(i, j) == ' ')
+						|| (board.getValue(i, j) == ' '
+								&& board.getValue(i + 1, j) != ' ')) {
+					// Set the value
+					board.setValue(i, j, 'O');
+					//calling Minimax function
+					Score tempBest = performMinimax(board, depth + 1, playerX,
+							i, j, noOfNodes, countminus, evaluateFunctionNo);
 
-        // Traverse all cells
-        for (int i = 0; i<rows; i++)
-        {
-            for (int j = 0; j<columns; j++)
-            {
-                // Check if cell is empty
-                if ((i==rows-1 && board.getValue(i,j)==' ')||(board.getValue(i,j)==' ' && board.getValue(i+1,j)!=' '))
-                {
-                    // Make the move
-//                    int valuex,valuey;
-                    board.setValue(i,j,'O');
-//                    for(int k=0;k<rows;k++){
-//                        bool result=false;
-//                        for(int l=0;l<columns;l++){
-//                            if ((k==rows-1 && board.getValue(k,l)==' ')||(board.getValue(k,l)==' ' && board.getValue(k+1,l)!=' ')){
-//                                valuex=k;
-//                                valuey=l;
-//                                result=true;
-//                                break;
-//                            }
-//                        }
-//                        if(result)
-//                            break;
-//                    }
+					//getting best value
+					if (best.value == 10 && tempBest.value == 10) {
+						if (tempBest.depth > best.depth) {
+							best = tempBest;
+						}
+					} else if (best.value == tempBest.value) {
+						if (tempBest.depth < best.depth) {
+							best = tempBest;
+						}
+					} else {
+						best.value = min(best.value, tempBest.value);
+						best.depth = depth;
+					}
 
+					// again setting the value of the position to empty
+					board.setValue(i, j, ' ');
+				}
+			}
+		}
+		return best;
+	} else if (player == playerX) {
 
-                    // Call minimax recursively and choose
-                    // the minimum value
-                    //best = min(best,performMinimax(board, depth+1, playerX,i,j,noOfNodes));
-                   // best=performMinimax(board, depth+1, playerX,i,j,noOfNodes);
-                    Score tempBest=performMinimax(board, depth+1, playerX,i,j,noOfNodes);
-                    if(best.value==tempBest.value){
-                        if(tempBest.depth<best.depth){
-                            best=tempBest;
-                        }
-                    }
-                    else{
-                        best.value=min(best.value,tempBest.value);
-                        best.depth=depth;
-                    }
+		//int best = -1000;
+		Score best;
+		best.value = -1000;
+		best.depth = -1;
+		//  // Traverse through the rows
+		for (int i = 0; i < rows; i++) {
+			// Traverse through the columns
+			for (int j = 0; j < columns; j++) {
+				// Check if cell is empty
+				if ((i == rows - 1 && board.getValue(i, j) == ' ')
+						|| (board.getValue(i, j) == ' '
+								&& board.getValue(i + 1, j) != ' ')) {
+					// Set the value
+					board.setValue(i, j, 'X');
+					//calling Minimax function
+					Score tempBest = performMinimax(board, depth + 1, playerO,
+							i, j, noOfNodes, countminus, evaluateFunctionNo);
+					//getting best value
+					if (best.value == -10 && tempBest.value == -10) {
+						if (tempBest.depth > best.depth) {
+							best = tempBest;
+						}
+					} else if (best.value == tempBest.value) {
+						if (tempBest.depth < best.depth) {
+							best = tempBest;
+						}
+					} else {
+						best.value = max(best.value, tempBest.value);
+						best.depth = depth;
+					}
 
-
-       //                    cout<<"Min Turn..at depth"<<depth<<"..putting at"<<i<<","<<j<<" best value : "<<best<<endl;
-                    // Undo the move
-                    board.setValue(i,j,' ');
-                }
-            }
-        }
-        return best;
-    }
-    else if(player==playerX){
-
-        //int best = -1000;
-        Score best;
-        best.value =-1000;
-        best.depth=-1;
-        // Traverse all cells
-        for (int i = 0; i<rows; i++)
-        {
-            for (int j = 0; j<columns; j++)
-            {
-                // Check if cell is empty
-                if ((i==rows-1 && board.getValue(i,j)==' ')||(board.getValue(i,j)==' ' && board.getValue(i+1,j)!=' '))
-                {
-                    // Make the move
-//                    int valuex,valuey;
-                    board.setValue(i,j,'X');
-//                    for(int k=0;k<rows;k++){
-//                        bool result=false;
-//                        for(int l=0;l<columns;l++){
-//                            if ((k==rows-1 && board.getValue(k,l)==' ')||(board.getValue(k,l)==' ' && board.getValue(k+1,l)!=' ')){
-//                                valuex=k;
-//                                valuey=l;
-//                                result=true;
-//                                break;
-//                            }
-//                        }
-//                        if(result)
-//                            break;
-//                    }
-//                    cout<<"Value of i "<<valuex<<" and value of j"<<valuey<<endl;
-                    // Call minimax recursively and choose
-                    // the maximum value
-                   //// best = performMinimax(board, depth+1, playerX,i,j,noOfNodes);
-                     Score tempBest=performMinimax(board, depth+1, playerO,i,j,noOfNodes);
-                    if(best.value==tempBest.value){
-                        if(tempBest.depth<best.depth){
-                            best=tempBest;
-                        }
-                    }
-                    else{
-                        best.value=max(best.value,tempBest.value);
-                        best.depth=depth;
-                    }
-                    //best.depth=depth;
-                    //cout<<"Max Turn..at depth "<<depth<<"..putting at"<<i<<","<<j<<" best value : "<<best<<endl;
-                    // Undo the move
-                    board.setValue(i,j,' ');
-                }
-            }
-        }
-        return best;
-    }
+					// again setting the value of the position to empty
+					board.setValue(i, j, ' ');
+				}
+			}
+		}
+		return best;
+	}
 }
 
-bool Ai_Player::deepEnough(int depth){
-if(depth>=3)
-    return true;
-return false;
+//checking the depth
+bool Ai_Player::deepEnough(int depth) {
+	if (depth >= 3)
+		return true;
+	return false;
 }
 
-void Ai_Player::temp(Board& b){
-    b.setValue(0,1,'O');
-}
-
-int Ai_Player::AIperformMove(Board& board,int choice,int player,int &noOfNodes){
-    if(player==playerO){
-    AI_Move ai_move=getBestMove(board,choice,player,noOfNodes);
-    board.setValue(ai_move.x,ai_move.y,'O');
-    cout<<"2 return val"<<board.evaluateFunction(playerO,ai_move.x,ai_move.y)<<endl;
-    return board.evaluateFunction(playerO,ai_move.x,ai_move.y);
-    }
-    else if(player==playerX){
-    AI_Move ai_move=getBestMove(board,choice,player,noOfNodes);
-    board.setValue(ai_move.x,ai_move.y,'X');
-    cout<<"1 return val"<<board.evaluateFunction(playerX,ai_move.x,ai_move.y)<<endl;
-    return board.evaluateFunction(playerX,ai_move.x,ai_move.y);
-    }
+//Performing move
+int Ai_Player::AIperformMove(Board& board, int choice, int player,
+		int &noOfNodes, int &countminus, int evaluateFunctionNo) {
+	//If payer is player 2
+	if (player == playerO) {
+		AI_Move ai_move = getBestMove(board, choice, player, noOfNodes,
+				countminus, evaluateFunctionNo);
+		board.setValue(ai_move.x, ai_move.y, 'O');
+		if (evaluateFunctionNo == 1)
+			return board.evaluateFunction1(playerO, ai_move.x, ai_move.y);
+		else if (evaluateFunctionNo == 2)
+			return board.evaluateFunction2(playerO, ai_move.x, ai_move.y);
+		else if (evaluateFunctionNo == 3)
+			return board.evaluateFunction3(playerO, ai_move.x, ai_move.y);
+	}
+	//If payer is player 1
+	else if (player == playerX) {
+		AI_Move ai_move = getBestMove(board, choice, player, noOfNodes,
+				countminus, evaluateFunctionNo);
+		board.setValue(ai_move.x, ai_move.y, 'X');
+		if (evaluateFunctionNo == 1)
+			return board.evaluateFunction1(playerX, ai_move.x, ai_move.y);
+		else if (evaluateFunctionNo == 2)
+			return board.evaluateFunction2(playerX, ai_move.x, ai_move.y);
+		else if (evaluateFunctionNo == 3)
+			return board.evaluateFunction3(playerX, ai_move.x, ai_move.y);
+	}
 
 }
 
-Score Ai_Player::performMinimax(Board board, int depth,int player,int row,int column,int &noOfNodes){
-    noOfNodes++;
-    //int score;
-    Score score;
-    score.depth=depth-1;
-    if(player==playerO){
-         score.value=board.evaluateFunction(playerX,row,column);
-         if(score.value!=10){
-            score.value=board.evaluateFunction(playerO,row,column);
-            if (score.value == -10){
-               score.value=10;
-               return score;
-            }
-         }
-    }
-    else if(player==playerX){
-         score.value=board.evaluateFunction(playerO,row,column);
-         if(score.value!=-10){
-            score.value=board.evaluateFunction(playerX,row,column);
-            if (score.value == 10){
-               score.value=-10;
-               return score;
-            }
-         }
-    }
-    //cout<<"working"<<endl;
-    if (score.value == 10)
-        return score;
+//Performing Minimax
+Score Ai_Player::performMinimax(Board board, int depth, int player, int row,
+		int column, int &noOfNodes, int &countminus, int evaluateFunctionNo) {
+	noOfNodes++;
+	Score score;
+	score.depth = depth - 1;
+	//If payer is player 2
+	if (player == playerO) {
+		if (evaluateFunctionNo == 1)
+			score.value = board.evaluateFunction1(playerX, row, column);
+		else if (evaluateFunctionNo == 2)
+			score.value = board.evaluateFunction2(playerX, row, column);
+		else if (evaluateFunctionNo == 3)
+			score.value = board.evaluateFunction3(playerX, row, column);
+		if (score.value != 10) {
+			if (evaluateFunctionNo == 1)
+				score.value = board.evaluateFunction1(playerO, row, column);
+			else if (evaluateFunctionNo == 2)
+				score.value = board.evaluateFunction2(playerO, row, column);
+			else if (evaluateFunctionNo == 3)
+				score.value = board.evaluateFunction3(playerO, row, column);
+			if (score.value == -10) {
+				countminus++;
+				score.value = 10;
+				return score;
+			}
+		}
+	}
+	//If payer is player 1
+	else if (player == playerX) {
+		if (evaluateFunctionNo == 1)
+			score.value = board.evaluateFunction1(playerO, row, column);
+		else if (evaluateFunctionNo == 2)
+			score.value = board.evaluateFunction2(playerO, row, column);
+		else if (evaluateFunctionNo == 3)
+			score.value = board.evaluateFunction3(playerO, row, column);
+		if (score.value != -10) {
+			if (evaluateFunctionNo == 1)
+				score.value = board.evaluateFunction1(playerX, row, column);
+			else if (evaluateFunctionNo == 2)
+				score.value = board.evaluateFunction2(playerX, row, column);
+			else if (evaluateFunctionNo == 3)
+				score.value = board.evaluateFunction3(playerX, row, column);
+			if (score.value == 10) {
+				countminus++;
+				score.value = -10;
+				return score;
+			}
+		}
+	}
+	// If Player 1 has won the game return evaluated score
+	if (score.value == 10) {
+		countminus++;
+		return score;
+	}
 
-    // If Minimizer has won the game return his/her
-    // evaluated score
-    if (score.value == -10)
-        return score;
+	// If Player 2 has won the game return evaluated score
+	if (score.value == -10) {
+		countminus++;
+		return score;
+	}
 
-    // If there are no more moves and no winner then
-    // it is a tie
-    if (board.isBoardFilled()){
-        score.value=0;
-        return score;
-    }
-
-    if(deepEnough(depth)){
-         //score.value=0;
-        return score;
-    }
-    return moveGen(board,depth,player,noOfNodes);
+	// If it is tie return 0
+	if (board.isBoardFilled()) {
+		countminus++;
+		score.value = 0;
+		return score;
+	}
+	// if deep Enough is true return 0
+	if (deepEnough(depth)) {
+		countminus++;
+		score.value = 0;
+		return score;
+	}
+	return moveGen(board, depth, player, noOfNodes, countminus,
+			evaluateFunctionNo);
 }
 
-Score Ai_Player::moveGen_alfabetaPruning(Board board,int depth,int player,int alpha, int beta,int &noOfNodes)
-{
-     if(player==playerO)
-    {
-       // int best = 1000;
-        Score best;
-        best.value = 1000;
-        best.depth=-1;
+//Move-Gen function which is plausible-move generator
+Score Ai_Player::moveGen_alfabetaPruning(Board board, int depth, int player,
+		int alpha, int beta, int &noOfNodes, int &countminus,
+		int evaluateFunctionNo) {
+	if (player == playerO) {
+		Score best;
+		best.value = 1000;
+		best.depth = -1;
 
-        // Traverse all cells
-        for (int i = 0; i<rows; i++)
-        {
-            bool breakResult=false;
-            for (int j = 0; j<columns; j++)
-            {
-                // Check if cell is empty
-                if ((i==rows-1 && board.getValue(i,j)==' ')||(board.getValue(i,j)==' ' && board.getValue(i+1,j)!=' '))
-                {
-                    // Make the move
-//                    int valuex,valuey;
-                    board.setValue(i,j,'O');
-//                    for(int k=0;k<rows;k++){
-//                        bool result=false;
-//                        for(int l=0;l<columns;l++){
-//                            if ((k==rows-1 && board.getValue(k,l)==' ')||(board.getValue(k,l)==' ' && board.getValue(k+1,l)!=' ')){
-//                                valuex=k;
-//                                valuey=l;
-//                                result=true;
-//                                break;
-//                            }
-//                        }
-//                        if(result)
-//                            break;
-//                    }
-                    // Call minimax recursively and choose
-                    // the minimum value
-                   Score tempBest=performMinimax(board, depth+1, playerX,i,j,noOfNodes);
-                    if(best.value==tempBest.value){
-                        if(tempBest.depth<best.depth){
-                            best=tempBest;
-                        }
-                    }
-                    else{
-                        best.value=min(best.value,tempBest.value);
-                        best.depth=depth;
-                    }
-               // cout<<"Min Turn....putting at"<<i<<","<<j<<" best value : "<<best<<endl;
-                    // Undo the move
-                    board.setValue(i,j,' ');
-            beta = min(beta, best.value);
-           // cout<<"min called";
-            // Alpha Beta Pruning
-            if (beta <= alpha){
-                breakResult=true;
-                   // cout<<" min called"<<endl;
-                break;
-            }
-
-                }
-            }
-            if(breakResult)
-                break;
-        }
-        return best;
-    }
-    else if(player==playerX){
-
-       // int best = -1000;
-        Score best;
-        best.value = -1000;
-        best.depth=-1;
-        // Traverse all cells
-        for (int i = 0; i<rows; i++)
-        {
-            bool breakResult=false;
-            for (int j = 0; j<columns; j++)
-            {
-                // Check if cell is empty
-                if ((i==rows-1 && board.getValue(i,j)==' ')||(board.getValue(i,j)==' ' && board.getValue(i+1,j)!=' '))
-                {
-                    // Make the move
-//                    int valuex,valuey;
-                    board.setValue(i,j,'X');
+		// Traverse all rows
+		for (int i = 0; i < rows; i++) {
+			bool breakResult = false;
+			// Traverse all columns
+			for (int j = 0; j < columns; j++) {
+				// Check if cell is empty
+				if ((i == rows - 1 && board.getValue(i, j) == ' ')
+						|| (board.getValue(i, j) == ' '
+								&& board.getValue(i + 1, j) != ' ')) {
+					// set the value
+					board.setValue(i, j, 'O');
 //
-//                    for(int k=0;k<rows;k++){
-//                        bool result=false;
-//                        for(int l=0;l<columns;l++){
-//                            if ((k==rows-1 && board.getValue(k,l)==' ')||(board.getValue(k,l)==' ' && board.getValue(k+1,l)!=' ')){
-//                                valuex=k;
-//                                valuey=l;
-//                                result=true;
-//                                break;
-//                            }
-//                        }
-//                        if(result)
-//                            break;
-//                    }
-                    // Call minimax recursively and choose
-                    // the maximum value
-                    Score tempBest=performMinimax(board, depth+1, playerO,i,j,noOfNodes);
-                    if(best.value==tempBest.value){
-                        if(tempBest.depth<best.depth){
-                            best=tempBest;
-                        }
-                    }
-                    else{
-                        best.value=max(best.value,tempBest.value);
-                        best.depth=depth;
-                    }
-                   // cout<<"Max Turn....putting at"<<i<<","<<j<<" best value : "<<best<<endl;
-                    // Undo the move
-                    board.setValue(i,j,' ');
-                    alpha = max(alpha, best.value);
+					Score tempBest = performMinimax_alfabetaPruning(board,
+							depth + 1, playerX, i, j, alpha, beta, noOfNodes,
+							countminus, evaluateFunctionNo);
+					//get the best value
+					if (best.value == 10 && tempBest.value == 10) {
+						if (tempBest.depth > best.depth) {
+							best = tempBest;
+						}
+					}
+					if (best.value == tempBest.value) {
+						if (tempBest.depth < best.depth) {
+							best = tempBest;
+						}
+					} else {
+						best.value = min(best.value, tempBest.value);
+						best.depth = depth;
+					}
 
-                    // Alpha Beta Pruning
-                    if (beta <= alpha){
-                         //   cout<<" max called"<<endl;
-                          breakResult=true;
-                    break;
-                    }
-                }
-            }
-            if(breakResult)
-                break;
-        }
-        return best;
-    }
+					// setting the board value again to empty
+					board.setValue(i, j, ' ');
+					beta = min(beta, best.value);
+					// alpha beta Pruning
+					if (beta <= alpha) {
+						breakResult = true;
+						break;
+					}
+
+				}
+			}
+			if (breakResult)
+				break;
+		}
+		return best;
+	} else if (player == playerX) {
+
+		Score best;
+		best.value = -1000;
+		best.depth = -1;
+		// Traverse all rows
+		for (int i = 0; i < rows; i++) {
+			bool breakResult = false;
+			// Traverse all columns
+			for (int j = 0; j < columns; j++) {
+				// Check if cell is empty
+				if ((i == rows - 1 && board.getValue(i, j) == ' ')
+						|| (board.getValue(i, j) == ' '
+								&& board.getValue(i + 1, j) != ' ')) {
+					// set the value
+					board.setValue(i, j, 'X');
+					// Call minimax Function
+					Score tempBest = performMinimax_alfabetaPruning(board,
+							depth + 1, playerO, i, j, alpha, beta, noOfNodes,
+							countminus, evaluateFunctionNo);
+					//get best value
+					if (best.value == -10 && tempBest.value == -10) {
+						if (tempBest.depth > best.depth) {
+							best = tempBest;
+						}
+					}
+					if (best.value == tempBest.value) {
+						if (tempBest.depth < best.depth) {
+							best = tempBest;
+						}
+					} else {
+						best.value = max(best.value, tempBest.value);
+						best.depth = depth;
+					}
+
+					// setting the board value again to empty
+					board.setValue(i, j, ' ');
+					alpha = max(alpha, best.value);
+
+					// alpha beta Pruning
+					if (beta <= alpha) {
+						breakResult = true;
+						break;
+					}
+				}
+			}
+			if (breakResult)
+				break;
+		}
+		return best;
+	}
 }
 
-Score Ai_Player::performMinimax_alfabetaPruning(Board board,int depth,int player,int row,int column,int alpha,int beta, int &noOfNodes)
-{
-    noOfNodes++;
-     //int score;
-     Score score;
-    score.depth=depth-1;
-    if(player==playerO){
-         score.value=board.evaluateFunction(playerX,row,column);
-          if(score.value!=10){
-            score.value=board.evaluateFunction(playerO,row,column);
-            if (score.value == -10){
-               score.value=10;
-               return score;
-            }
-         }
-    }
-    else if(player==playerX){
-         score.value=board.evaluateFunction(playerO,row,column);
-         if(score.value!=-10){
-            score.value=board.evaluateFunction(playerX,row,column);
-            if (score.value == 10){
-               score.value=-10;
-               return score;
-            }
-         }
-    }
-    //cout<<"working"<<endl;
-    if (score.value == 10)
-        return score;
+//performing minimax
+Score Ai_Player::performMinimax_alfabetaPruning(Board board, int depth,
+		int player, int row, int column, int alpha, int beta, int &noOfNodes,
+		int &countminus, int evaluateFunctionNo) {
+	noOfNodes++;
+	Score score;
+	score.depth = depth - 1;
 
-    // If Minimizer has won the game return his/her
-    // evaluated score
-    if (score.value == -10)
-        return score;
+	//If player is player 2
+	if (player == playerO) {
+		if (evaluateFunctionNo == 1)
+			score.value = board.evaluateFunction1(playerX, row, column);
+		else if (evaluateFunctionNo == 2)
+			score.value = board.evaluateFunction2(playerX, row, column);
+		else if (evaluateFunctionNo == 3)
+			score.value = board.evaluateFunction3(playerX, row, column);
+		if (score.value != 10) {
+			if (evaluateFunctionNo == 1)
+				score.value = board.evaluateFunction1(playerO, row, column);
+			else if (evaluateFunctionNo == 2)
+				score.value = board.evaluateFunction2(playerO, row, column);
+			else if (evaluateFunctionNo == 3)
+				score.value = board.evaluateFunction3(playerO, row, column);
+			if (score.value == -10) {
+				countminus++;
+				score.value = 10;
+				return score;
+			}
+		}
+	}
+	//If player is player 1
+	else if (player == playerX) {
+		if (evaluateFunctionNo == 1)
+			score.value = board.evaluateFunction1(playerO, row, column);
+		else if (evaluateFunctionNo == 2)
+			score.value = board.evaluateFunction2(playerO, row, column);
+		else if (evaluateFunctionNo == 3)
+			score.value = board.evaluateFunction3(playerO, row, column);
+		if (score.value != -10) {
+			if (evaluateFunctionNo == 1)
+				score.value = board.evaluateFunction1(playerX, row, column);
+			else if (evaluateFunctionNo == 2)
+				score.value = board.evaluateFunction2(playerX, row, column);
+			else if (evaluateFunctionNo == 3)
+				score.value = board.evaluateFunction3(playerX, row, column);
+			if (score.value == 10) {
+				countminus++;
+				score.value = -10;
+				return score;
+			}
+		}
+	}
+	// If Player 1 has won the game return evaluated score
+	if (score.value == 10) {
+		countminus++;
+		return score;
+	}
 
-    // If there are no more moves and no winner then
-    // it is a tie
-    if (board.isBoardFilled()){
-        score.value=0;
-        return score;
-    }
+	// If Player 2 has won the game return evaluated score
+	if (score.value == -10) {
+		countminus++;
+		return score;
+	}
 
-    if(deepEnough(depth)){
-        return score;
-    }
+	//
+	//If it is a tie return 0
+	if (board.isBoardFilled()) {
+		countminus++;
+		score.value = 0;
+		return score;
+	}
 
-    return moveGen_alfabetaPruning(board,depth,player,alpha,beta,noOfNodes);
+	// if deep Enough is true return 0
+	if (deepEnough(depth)) {
+		score.value = 0;
+		countminus++;
+		return score;
+	}
+
+	return moveGen_alfabetaPruning(board, depth, player, alpha, beta, noOfNodes,
+			countminus, evaluateFunctionNo);
 }
 
-AI_Move Ai_Player::getBestMove(Board board,int choice,int player,int &noOfNodes){
-   AI_Move bestMove;
-   int count1,count;
-    srand(time(0));
-    int arr1[6];
-    int arr[7];
-    if(player==playerO){
-    for (int i = 0; i<rows; i++)
-    {
-        for (int j = 0; j<columns; j++)
-        {
-            // Check if celll is empty
-            if ((i==rows-1 && board.getValue(i,j)==' ')||(board.getValue(i,j)==' ' && board.getValue(i+1,j)!=' '))
-            {
-                board.setValue(i,j,'O');
-               int result= board.evaluateFunction(playerO,i,j);
-                 board.setValue(i,j,' ');
-               if(result==-10){
-                bestMove.x=i;
-                bestMove.y=j;
-                bestMove.score=-10;
-                return bestMove;
-               }
+AI_Move Ai_Player::getBestMove(Board board, int choice, int player,
+		int &noOfNodes, int &countminus, int evaluateFunctionNo) {
+	AI_Move bestMove;
+	int count1, count;
+	srand(time(0));
+	int arr1[6];
+	int arr[7];
 
-            }
-        }
-    }
-     for (int i = 0; i<rows; i++)
-    {
-        for (int j = 0; j<columns; j++)
-        {
-            // Check if celll is empty
-            if ((i==rows-1 && board.getValue(i,j)==' ')||(board.getValue(i,j)==' ' && board.getValue(i+1,j)!=' '))
-            {
-                board.setValue(i,j,'X');
-                int result=board.evaluateFunction(playerX,i,j);
-                board.setValue(i,j,' ');
-                if(result==10){
-                bestMove.x=i;
-                bestMove.y=j;
-                bestMove.score=-10;
-                return bestMove;
-               }
+	int p, q;
 
-            }
-        }
-    }
-    }
-    if(player==playerX){
-    for (int i = 0; i<rows; i++)
-    {
-        for (int j = 0; j<columns; j++)
-        {
-            // Check if celll is empty
-            if ((i==rows-1 && board.getValue(i,j)==' ')||(board.getValue(i,j)==' ' && board.getValue(i+1,j)!=' '))
-            {
-                board.setValue(i,j,'X');
-               int result= board.evaluateFunction(playerX,i,j);
-                board.setValue(i,j,' ');
-               if(result==10){
-                bestMove.x=i;
-                bestMove.y=j;
-                bestMove.score=10;
-                return bestMove;
-               }
+	if (player == playerO) {
+		//checking if player 2 is winning
+		for (p = 0; p < rows; p++) {
+			for (q = 0; q < columns; q++) {
+				// Check if celll is empty
+				if ((p == rows - 1 && board.getValue(p, q) == ' ')
+						|| (board.getValue(p, q) == ' '
+								&& board.getValue(p + 1, q) != ' ')) {
 
-            }
-        }
-    }
-     for (int i = 0; i<rows; i++)
-    {
-        for (int j = 0; j<columns; j++)
-        {
-            // Check if celll is empty
-            if ((i==rows-1 && board.getValue(i,j)==' ')||(board.getValue(i,j)==' ' && board.getValue(i+1,j)!=' '))
-            {
-                board.setValue(i,j,'O');
-                int result=board.evaluateFunction(playerO,i,j);
-                  board.setValue(i,j,' ');
-               if(result==-10){
-                bestMove.x=i;
-                bestMove.y=j;
-                bestMove.score=10;
-                return bestMove;
-               }
+					int result;
+					if (evaluateFunctionNo == 1)
+						result = board.evaluateFunction1(playerO, p, q);
+					else if (evaluateFunctionNo == 2)
+						result = board.evaluateFunction2(playerO, p, q);
+					else if (evaluateFunctionNo == 3)
+						result = board.evaluateFunction3(playerO, p, q);
 
-            }
-        }
-    }
-    }
+					if (result == -10) {
+						bestMove.x = p;
+						bestMove.y = q;
+						bestMove.score = -10;
+						return bestMove;
+					}
 
+				}
+			}
+		}
+		//checking if player 1 is winning
+		for (p = 0; p < rows; p++) {
+			for (q = 0; q < columns; q++) {
+				// Check if celll is empty
+				if ((p == rows - 1 && board.getValue(p, q) == ' ')
+						|| (board.getValue(p, q) == ' '
+								&& board.getValue(p + 1, q) != ' ')) {
 
-   switch(player){
+					int result;
+					if (evaluateFunctionNo == 1)
+						result = board.evaluateFunction1(playerX, p, q);
+					else if (evaluateFunctionNo == 2)
+						result = board.evaluateFunction2(playerX, p, q);
+					else if (evaluateFunctionNo == 3)
+						result = board.evaluateFunction3(playerX, p, q);
 
-case 1:
+					if (result == 10) {
+						bestMove.x = p;
+						bestMove.y = q;
+						bestMove.score = -10;
+						return bestMove;
+					}
 
-    bestMove.score=-100;
-    bestMove.x = -1;
-    bestMove.y = -1;
-    bestMove.depth=-1;
+				}
+			}
+		}
+	}
+	if (player == playerX) {
+		//checking if player 1 is winning
+		for (p = 0; p < rows; p++) {
+			for (q = 0; q < columns; q++) {
+				// Check if celll is empty
+				if ((p == rows - 1 && board.getValue(p, q) == ' ')
+						|| (board.getValue(p, q) == ' '
+								&& board.getValue(p + 1, q) != ' ')) {
 
+					int result;
+					if (evaluateFunctionNo == 1)
+						result = board.evaluateFunction1(playerX, p, q);
+					else if (evaluateFunctionNo == 2)
+						result = board.evaluateFunction2(playerX, p, q);
+					else if (evaluateFunctionNo == 3)
+						result = board.evaluateFunction3(playerX, p, q);
 
+					if (result == 10) {
+						bestMove.x = p;
+						bestMove.y = q;
+						bestMove.score = 10;
+						return bestMove;
+					}
 
-//    for (int i = 0; i<rows; i++)
-//    {
-//        for (int j = 0; j<columns; j++)
-//        {
-//            // Check if cell is empty
-//            if ((i==rows-1 && board.getValue(i,j)==' ')||(board.getValue(i,j)==' ' && board.getValue(i+1,j)!=' '))
-//            {
-//                // Make the move
-//                int valOfMove;
-//                board.setValue(i,j,'X');
-//
-//                // compute evaluation function for this
-//                // move.
-//                if(choice==1)
-//                 valOfMove = performMinimax(board, 0, playerO,i,j);
-//                else if(choice==2)
-//                 valOfMove = performMinimax_alfabetaPruning(board, 0, playerO,i,j,100,-100);
-//
-//                // Undo the move
-//                board.setValue(i,j,' ');
-//
-//                // If the value of the current move is
-//                // more than the best value, then update
-//                // best/
-//                if (valOfMove > bestMove.score)
-//                {
-//                    bestMove.x = i;
-//                    bestMove.y = j;
-//                    bestMove.score = valOfMove;
-//                }
-//            }
-//        }
-//    }
-//    return bestMove;
+				}
+			}
+		}
+		//checking if player 2 is winning
+		for (p = 0; p < rows; p++) {
+			for (q = 0; q < columns; q++) {
+				// Check if celll is empty
+				if ((p == rows - 1 && board.getValue(p, q) == ' ')
+						|| (board.getValue(p, q) == ' '
+								&& board.getValue(p + 1, q) != ' ')) {
+					int result;
 
- count1=0;
-        for(int l=0;l<rows;l++){
-        //cout<<rand()%10<<endl;
-        arr1[l]=0;
-    }
-         while(count1!=6){
-        int i=rand()%6;
-        if(arr1[i]==0){
-            arr1[i]=1;
-            count1++;
+					if (evaluateFunctionNo == 1)
+						result = board.evaluateFunction1(playerO, p, q);
+					else if (evaluateFunctionNo == 2)
+						result = board.evaluateFunction2(playerO, p, q);
+					else if (evaluateFunctionNo == 3)
+						result = board.evaluateFunction3(playerO, p, q);
 
-        count=0;
-        for(int k=0;k<columns;k++){
-        //cout<<rand()%10<<endl;
-        arr[k]=0;
-    }
-       // for (int j = 0; j<columns; j++)
-        //{
-            // Check if cell is empty
-        while(count!=7){
-        int j=rand()%7;
-        if(arr[j]==0){
-            arr[j]=1;
-            count++;
-            if ((i==rows-1 && board.getValue(i,j)==' ')||(board.getValue(i,j)==' ' && board.getValue(i+1,j)!=' '))
-            {
-                // Make the move
-                //int valOfMove;
-                Score valOfMove;
-                board.setValue(i,j,'X');
+					if (result == -10) {
+						bestMove.x = p;
+						bestMove.y = q;
+						bestMove.score = 10;
+						return bestMove;
+					}
 
-                // compute evaluation function for this
-                // move.
-                if(choice==2)
-                valOfMove = performMinimax_alfabetaPruning(board, 0, playerX,i,j,100,-100,noOfNodes);
-                else if(choice==1)
-                 valOfMove = performMinimax(board, 0, playerO,i,j,noOfNodes);
+				}
+			}
+		}
+	}
 
+	switch (player) {
 
-                // Undo the move
-                board.setValue(i,j,' ');
+	case 1:
 
-                // If the value of the current move is
-                // more than the best value, then update
-                // best/
-                if (valOfMove.value > bestMove.score)
-                {
-                    bestMove.x = i;
-                    bestMove.y = j;
-                    bestMove.score = valOfMove.value;
-                    bestMove.depth = valOfMove.depth;
-                }
-                else if(valOfMove.value==bestMove.score){
-                    if (valOfMove.depth < bestMove.depth)
-                    {
-                        bestMove.x = i;
-                        bestMove.y = j;
-                        bestMove.score = valOfMove.value;
-                        bestMove.depth = valOfMove.depth;
-                    }
-                }
-            }
-        }
-}
-       // }
-    }
-         }
-    return bestMove;
+		bestMove.score = -100;
+		bestMove.x = -1;
+		bestMove.y = -1;
+		bestMove.depth = -1;
 
-case 2:
-//int bestVal = 100;
-   // AI_Move bestMove;
-    bestMove.score=100;
-    bestMove.x = -1;
-    bestMove.y = -1;
-    bestMove.depth=-1;
-   // for (int i = 0; i<rows; i++)
-   // {
-        count1=0;
-        for(int l=0;l<rows;l++){
-        //cout<<rand()%10<<endl;
-        arr1[l]=0;
-    }
-         while(count1!=6){
-        int i=rand()%6;
-        if(arr1[i]==0){
-            arr1[i]=1;
-            count1++;
+		count1 = 0;
+		for (int l = 0; l < rows; l++) {
+			arr1[l] = 0;
+		}
+		while (count1 != 6) {
 
-        count=0;
-        for(int k=0;k<columns;k++){
-        //cout<<rand()%10<<endl;
-        arr[k]=0;
-    }
-       // for (int j = 0; j<columns; j++)
-        //{
-            // Check if cell is empty
-        while(count!=7){
-        int j=rand()%7;
-        if(arr[j]==0){
-            arr[j]=1;
-            count++;
-            if ((i==rows-1 && board.getValue(i,j)==' ')||(board.getValue(i,j)==' ' && board.getValue(i+1,j)!=' '))
-            {
-                // Make the move
-                //int valOfMove;
-                Score valOfMove;
-                board.setValue(i,j,'O');
+			int i = rand() % 6;
+			if (arr1[i] == 0) {
+				arr1[i] = 1;
+				count1++;
 
-                // compute evaluation function for this
-                // move.
-                if(choice==2)
-                 valOfMove = performMinimax_alfabetaPruning(board, 0, playerX,i,j,100,-100,noOfNodes);
-                else if(choice==1)
-                 valOfMove = performMinimax(board, 0, playerX,i,j,noOfNodes);
+				count = 0;
+				for (int k = 0; k < columns; k++) {
 
-                // Undo the move
-                board.setValue(i,j,' ');
+					arr[k] = 0;
+				}
 
-                // If the value of the current move is
-                // more than the best value, then update
-                // best/
-                if (valOfMove.value < bestMove.score)
-                {
-                    bestMove.x = i;
-                    bestMove.y = j;
-                    bestMove.score = valOfMove.value;
-                    bestMove.depth = valOfMove.depth;
-                }
-                else if(valOfMove.value==bestMove.score){
-                    if (valOfMove.depth < bestMove.depth)
-                    {
-                        bestMove.x = i;
-                        bestMove.y = j;
-                        bestMove.score = valOfMove.value;
-                        bestMove.depth = valOfMove.depth;
-                    }
-                }
-            }
-        }
-}
-       // }
-    }
-         }
-    return bestMove;
-    }
+				while (count != 7) {
+					//For putting values randomly in any row
+					int j = rand() % 7;
+					if (arr[j] == 0) {
+						arr[j] = 1;
+						count++;
+						if ((i == rows - 1 && board.getValue(i, j) == ' ')
+								|| (board.getValue(i, j) == ' '
+										&& board.getValue(i + 1, j) != ' ')) {
+							// Setting the value
+							Score valOfMove;
+							board.setValue(i, j, 'X');
+
+							//calling the minimax function
+							if (choice == 2)
+								valOfMove = performMinimax_alfabetaPruning(
+										board, 0, playerO, i, j, 100, -100,
+										noOfNodes, countminus,
+										evaluateFunctionNo);
+							else if (choice == 1)
+								valOfMove = performMinimax(board, 0, playerO, i,
+										j, noOfNodes, countminus,
+										evaluateFunctionNo);
+
+							// setting the value to empty
+							board.setValue(i, j, ' ');
+
+							//getting the best move
+							if (valOfMove.value > bestMove.score) {
+								bestMove.x = i;
+								bestMove.y = j;
+								bestMove.score = valOfMove.value;
+								bestMove.depth = valOfMove.depth;
+							} else if (valOfMove.value == -10
+									&& bestMove.score == -10) {
+								if (valOfMove.depth > bestMove.depth) {
+									bestMove.x = i;
+									bestMove.y = j;
+									bestMove.score = valOfMove.value;
+									bestMove.depth = valOfMove.depth;
+								}
+							} else if (valOfMove.value == bestMove.score) {
+								if (valOfMove.depth < bestMove.depth) {
+									bestMove.x = i;
+									bestMove.y = j;
+									bestMove.score = valOfMove.value;
+									bestMove.depth = valOfMove.depth;
+								}
+							}
+						}
+					}
+				}
+				// }
+			}
+		}
+		return bestMove;
+
+	case 2:
+		bestMove.score = 100;
+		bestMove.x = -1;
+		bestMove.y = -1;
+		bestMove.depth = -1;
+
+		count1 = 0;
+		for (int l = 0; l < rows; l++) {
+
+			arr1[l] = 0;
+		}
+		while (count1 != 6) {
+			int i = rand() % 6;
+			if (arr1[i] == 0) {
+				arr1[i] = 1;
+				count1++;
+
+				count = 0;
+				for (int k = 0; k < columns; k++) {
+					arr[k] = 0;
+				}
+
+				while (count != 7) {
+					//For putting values randomly in any row
+					int j = rand() % 7;
+					if (arr[j] == 0) {
+						arr[j] = 1;
+						count++;
+						if ((i == rows - 1 && board.getValue(i, j) == ' ')
+								|| (board.getValue(i, j) == ' '
+										&& board.getValue(i + 1, j) != ' ')) {
+
+							// Setting the value
+							Score valOfMove;
+							board.setValue(i, j, 'O');
+
+							//calling the minimax function
+							if (choice == 2)
+								valOfMove = performMinimax_alfabetaPruning(
+										board, 0, playerX, i, j, 100, -100,
+										noOfNodes, countminus,
+										evaluateFunctionNo);
+							else if (choice == 1)
+								valOfMove = performMinimax(board, 0, playerX, i,
+										j, noOfNodes, countminus,
+										evaluateFunctionNo);
+
+							// setting the value to empty
+							board.setValue(i, j, ' ');
+
+							//getting the best move
+							if (valOfMove.value < bestMove.score) {
+								bestMove.x = i;
+								bestMove.y = j;
+								bestMove.score = valOfMove.value;
+								bestMove.depth = valOfMove.depth;
+							} else if (valOfMove.value == 10
+									&& bestMove.score == 10) {
+								if (valOfMove.depth > bestMove.depth) {
+									bestMove.x = i;
+									bestMove.y = j;
+									bestMove.score = valOfMove.value;
+									bestMove.depth = valOfMove.depth;
+								}
+							} else if (valOfMove.value == bestMove.score) {
+								if (valOfMove.depth < bestMove.depth) {
+									bestMove.x = i;
+									bestMove.y = j;
+									bestMove.score = valOfMove.value;
+									bestMove.depth = valOfMove.depth;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return bestMove;
+	}
 }
 
